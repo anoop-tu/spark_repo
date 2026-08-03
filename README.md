@@ -9,6 +9,12 @@ A learning repository documenting self-study of Apache Spark and PySpark, organi
 
 ## Repository Structure
 
+### Root-Level Reference Files
+Architecture and workflow visuals related to Spark/YARN execution:
+- `hdi-yarn-architecture.png` - HDInsight YARN architecture diagram
+- `yarn_job_submission_flow.png` - YARN job submission flow
+- `yarn_hdfs_full_cluster_map.svg` - Cluster and HDFS mapping visual
+
 ### week4practice - RDDs and Basic Spark Operations
 Covers RDD fundamentals, caching strategies, repartitioning, and join operations:
 - `spark_basics-*.ipynb` - Introduction to Spark core concepts
@@ -30,6 +36,12 @@ Focuses on Spark SQL and query optimization:
 ### week7practice - Advanced Topics
 Covers specialized and advanced Spark concepts:
 - `week7lesson*.ipynb` - Advanced topics and patterns
+- `week7Assignment*.ipynb` - Practice assignments
+
+### week8practice - Extended Practice and Advanced Workflows
+Adds additional lesson and assignment notebooks for continued Spark practice:
+- `week8lesson*.ipynb` - Week 8 lessons
+- `week8assignment*.ipynb` - Week 8 assignments
 
 ## How to Run
 
@@ -57,3 +69,4 @@ The repository follows a structured progression:
 2. **Week 5** - Learn DataFrame API and transformations
 3. **Week 6** - Study Spark SQL and query optimization
 4. **Week 7** - Explore advanced topics and patterns
+5. **Week 8** - Continue with advanced lessons and applied practice
