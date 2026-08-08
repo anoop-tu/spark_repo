@@ -1,0 +1,10 @@
+spark-submit \
+--master yarn \
+--num-executors 1 \
+--executor-cores 1 \
+--executor-memory 1G \
+--conf spark.dynamicAllocation.enabled=false \
+pgm1.py
+
+
+##spark defaul conf location /etc/spark3/conf

@@ -1,0 +1,21 @@
+from pyspark.sql import SparkSession
+
+spark = SparkSession. \
+builder. \
+appName("week9-lesson-7"). \
+config("spark.sql.warehouse.dir", "/user/itv027484/warehouse"). \
+enableHiveSupport(). \
+master('yarn'). \
+getOrCreate()
+
+order_schema= 'order_id long, order_date string , customer_id long, order_status string'
+
+orders_df = spark.read.format('csv').schema(order_schema).load('/public/trendytech/orders/orders_1gb.csv')
+
+print(orders_df.rdd.getNumPartitions())
+
+orders_df.createOrReplaceTempView("orders")
+
+spark.sql("select count(*) from orders where order_status = 'CLOSED'").show()
+
+spark.stop()
