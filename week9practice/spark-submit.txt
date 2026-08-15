@@ -8,3 +8,13 @@ pgm1.py
 
 
 ##spark defaul conf location /etc/spark3/conf
+
+
+
+spark-submit \
+--master yarn \
+--num-executors 2 \
+--executor-cores 2 \
+--executor-memory 4G \
+--conf spark.dynamicAllocation.enabled=false \
+week9-assignment-2.txt.py
