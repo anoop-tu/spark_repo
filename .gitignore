@@ -1,0 +1,20 @@
+# Jupyter
+.ipynb_checkpoints/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+env/
+
+# Spark
+metastore_db/
+derby.log
+spark-warehouse/
+
+# Editor / OS
+.vscode/
+.DS_Store
+Thumbs.db
