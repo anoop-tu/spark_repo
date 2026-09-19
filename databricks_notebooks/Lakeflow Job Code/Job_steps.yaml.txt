@@ -1,0 +1,93 @@
+resources:
+  jobs:
+    LF_job_1:
+      name: LF-job-1
+      tasks:
+        - task_key: customers_bronze
+          sql_task:
+            file:
+              path: /Workspace/Users/anooptu@gmail.com/LF-Job-1/cust_bronze_ingest.sql
+              source: WORKSPACE
+            warehouse_id: 25973ea34708b137
+        - task_key: cust_silver_cleaned
+          depends_on:
+            - task_key: customers_bronze
+          notebook_task:
+            notebook_path: /Workspace/Users/anooptu@gmail.com/LF-Job-1/cust_silver
+            source: WORKSPACE
+          environment_key: Default
+        - task_key: cust_silver_enriched
+          depends_on:
+            - task_key: cust_silver_cleaned
+          notebook_task:
+            notebook_path: /Workspace/Users/anooptu@gmail.com/LF-Job-1/cust_silver_enrich
+            source: WORKSPACE
+          max_retries: 1
+          min_retry_interval_millis: 0
+          disable_auto_optimization: false
+          environment_key: Default
+        - task_key: orders_bronze_ingestion
+          notebook_task:
+            notebook_path: /Workspace/Users/anooptu@gmail.com/LF-Job-1/orders_bronze_ingestion
+            source: WORKSPACE
+          environment_key: Default
+        - task_key: orders_silver_cleaned
+          depends_on:
+            - task_key: orders_bronze_ingestion
+          notebook_task:
+            notebook_path: /Workspace/Users/anooptu@gmail.com/LF-Job-1/order_silver_cleaned
+            source: WORKSPACE
+          environment_key: Default
+        - task_key: orders_dup_check
+          depends_on:
+            - task_key: orders_silver_cleaned
+          condition_task:
+            op: EQUAL_TO
+            left: "{{tasks.orders_silver_cleaned.values.has_duplicates}}"
+            right: "true"
+        - task_key: order_silver_dedup
+          depends_on:
+            - task_key: orders_dup_check
+              outcome: "true"
+          notebook_task:
+            notebook_path: /Workspace/Users/anooptu@gmail.com/LF-Job-1/order_silver_dedup
+            source: WORKSPACE
+          environment_key: Default
+        - task_key: orders_silver_nodup
+          depends_on:
+            - task_key: orders_dup_check
+              outcome: "false"
+          notebook_task:
+            notebook_path: /Workspace/Users/anooptu@gmail.com/LF-Job-1/orders_silver_nodup
+            source: WORKSPACE
+          environment_key: Default
+        - task_key: gold-city_wise_sales
+          depends_on:
+            - task_key: cust_silver_enriched
+            - task_key: orders_silver_nodup
+            - task_key: order_silver_dedup
+          run_if: NONE_FAILED
+          notebook_task:
+            notebook_path: /Workspace/Users/anooptu@gmail.com/LF-Job-1/city-wise-sales-gold
+            source: WORKSPACE
+          environment_key: Default
+        - task_key: gold_layer_state_wise
+          depends_on:
+            - task_key: gold-city_wise_sales
+          for_each_task:
+            inputs: '["Ahmedabad","Kolkata","Hyderabad","Bangalore"]'
+            concurrency: 1
+            task:
+              task_key: gold_layer_state_wise_iteration
+              notebook_task:
+                notebook_path: /Workspace/Users/anooptu@gmail.com/LF-Job-1/city-state_wise_sales_gold
+                base_parameters:
+                  state: "{{input}}"
+                source: WORKSPACE
+      queue:
+        enabled: true
+      environments:
+        - environment_key: Default
+          spec:
+            environment_version: "5"
+      performance_target: PERFORMANCE_OPTIMIZED
