@@ -50,28 +50,24 @@ result_df = result_df.fillna(0)
 result_df.show(truncate=False)
 
 
-# Option-1 - Using 'when'
+# Option-2 - Using 'when'
 
 # from pyspark.sql import functions as F
 
 # # Group by Patient and Hospital
-# result_df = df.groupBy("Pat-id", "hosp-id").agg(
-    
-#     # --- APPROVED CLAIMS ---
-#     F.max(F.when(F.col("claim-stat") == "Approved", F.col("claim-amt"))).alias("Approved_max_claim"),
-#     F.sum(F.when(F.col("claim-stat") == "Approved", F.col("claim-amt"))).alias("Approved_total_claim"),
-    
-#     # --- DENIED CLAIMS ---
-#     F.max(F.when(F.col("claim-stat") == "Denied", F.col("claim-amt"))).alias("Denied_max_claim"),
-#     F.sum(F.when(F.col("claim-stat") == "Denied", F.col("claim-amt"))).alias("Denied_total_claim"),
-    
-#     # --- PENDING CLAIMS ---
-#     F.max(F.when(F.col("claim-stat") == "Pending", F.col("claim-amt"))).alias("Pending_max_claim"),
-#     F.sum(F.when(F.col("claim-stat") == "Pending", F.col("claim-amt"))).alias("Pending_total_claim")
-    
-# ).fillna(0) # Replace nulls with 0 for cleaner output
+result_df = df.groupBy("Pat-id", "hosp-id").agg(   
+# --- APPROVED CLAIMS ---
+    F.max(F.when(F.col("claim-stat") == "Approved", F.col("claim-amt"))).alias("Approved_max_claim"),
+    F.sum(F.when(F.col("claim-stat") == "Approved", F.col("claim-amt"))).alias("Approved_total_claim"),    
+# --- DENIED CLAIMS ---
+    F.max(F.when(F.col("claim-stat") == "Denied", F.col("claim-amt"))).alias("Denied_max_claim"),
+    F.sum(F.when(F.col("claim-stat") == "Denied", F.col("claim-amt"))).alias("Denied_total_claim"),    
+    # --- PENDING CLAIMS ---
+    F.max(F.when(F.col("claim-stat") == "Pending", F.col("claim-amt"))).alias("Pending_max_claim"),
+    F.sum(F.when(F.col("claim-stat") == "Pending", F.col("claim-amt"))).alias("Pending_total_claim")    
+   ).fillna(0) # Replace nulls with 0 for cleaner output
 
-# result_df.show(truncate=False)
+result_df.show(truncate=False)
 
 
 # Q-2 - Suppose I have this data streaming from kafka and my watermark is 10 min. How not to lose the late arriving data
